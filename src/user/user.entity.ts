@@ -17,10 +17,10 @@ class User{
     @Column({nullable : false})
     type: string 
 
-    @Column({nullable: false})
+    @Column({nullable: true})
     bank_ac_number: string
 
-    @Column({nullable: false})
+    @Column({nullable: true})
     IFS_code : string;
 }
 

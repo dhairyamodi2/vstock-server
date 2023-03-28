@@ -1,10 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, TypeORMError } from 'typeorm';
-import { LoginDto } from './user.dto';
+import { LoginDto, RegisterDto } from './user.dto';
 import User from './user.entity';
-import { LoginResponse } from './user.responses';
+import { LoginResponse, RegisterResponse } from './user.responses';
 import * as jwt from 'jsonwebtoken';
+import { env } from 'src/constants/constants';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,7 @@ export class UserService {
     ){
 
     }
+
     async login(payload : LoginDto) : Promise<LoginResponse>{
         let token = null;
         try {
@@ -29,15 +31,42 @@ export class UserService {
             token = await jwt.sign({
                 email: payload.email,
                 id: payload.id
-            }, 'sljsdaljsdfsdlPOwe', {
-                expiresIn: '3d'
+            }, env.jwt_secret, {
+                expiresIn: env.jwt_expire
             })
             return {statusCode: 200, message: "", data: {user, token}}
         } catch (error) {
             if(error instanceof TypeORMError){
-                return {statusCode: 412, message: error.message, data: {user: null, token}}
+                return {statusCode: 422, message: error.message, data: {user: null, token}}
             }         
             return {statusCode: 500, message: error, data: {user: null, token}}   
         }
+    }
+
+    async register(payload: RegisterDto) : Promise<RegisterResponse> {
+        let user : User | null = null;
+        let token = null;
+        try {
+            if(payload.type == "contributor"){
+                if(!payload.IFS_code || !payload.bank_ac_number){
+                    return {statusCode: 400, message: 'Bank details required for contributors', data: {user, token}}
+                }
+            }
+            let data = await this.userRepository.insert(payload);
+            token = await jwt.sign({
+                email: payload.email,
+                id: payload.id
+            }, env.jwt_secret, {
+                expiresIn: env.jwt_expire
+            })
+            return {statusCode: 200, message: "", data: {user: payload, token}}
+
+        } catch (error) {
+            if(error instanceof TypeORMError){
+                return {statusCode: 422, message: error.message, data: {user, token}}
+            }
+            return {statusCode: 500, message: error, data: {user, token}}
+        }
+        
     }
 }
