@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, TypeORMError } from 'typeorm';
+import { QueryFailedError, Repository, TypeORMError } from 'typeorm';
 import { LoginDto, RegisterDto } from './user.dto';
 import User from './user.entity';
 import { LoginResponse, RegisterResponse } from './user.responses';
@@ -11,7 +11,7 @@ import { env } from 'src/constants/constants';
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private userRepository : Repository<User>
+        private userRepository : Repository<User>,
     ){
 
     }
@@ -63,6 +63,7 @@ export class UserService {
 
         } catch (error) {
             if(error instanceof TypeORMError){
+                if(error.message.includes('Duplicate'))
                 return {statusCode: 422, message: error.message, data: {user, token}}
             }
             return {statusCode: 500, message: error, data: {user, token}}

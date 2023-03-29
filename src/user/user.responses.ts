@@ -7,7 +7,7 @@ export interface LoginResponse{
 }
 
 
-export interface    RegisterResponse{
+export interface RegisterResponse{
     statusCode : 200 | 400 | 422 | 500
     message: string;
     data: {user : User | null, token : string | null}
