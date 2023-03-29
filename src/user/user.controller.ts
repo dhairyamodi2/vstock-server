@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Response } from 'express';
 import { endWith } from 'rxjs';
+import { CustomRequest } from 'src/types/types';
 import { Repository } from 'typeorm';
 import { LoginDto, RegisterDto } from './user.dto';
 import { UserService } from './user.service';
@@ -26,8 +27,11 @@ export class UserController {
 
     @Get('me')
     @UseGuards(AuthGuard('jwt'))
-    me(@Req() req) {
-        return req.user;
+    async me(@Req() req: CustomRequest, @Res() res : Response) {
+        if(!req.user){
+            return res.status(401).json({success: false, message: "unauthorized", data: {user : null}})
+        }
+        return res.status(200).json({success: true, message: "", data: {user: req.user}});
     }
 
 }
