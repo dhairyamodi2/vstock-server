@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import Stock from "src/stock/stock.entity";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 
 @Entity()
 class User{
@@ -22,6 +23,9 @@ class User{
 
     @Column({nullable: true})
     IFS_code : string;
+
+    @OneToMany(() => Stock, (stock) => stock.user)
+    stock : Stock[]
 }
 
 export default User;

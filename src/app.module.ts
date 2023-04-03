@@ -4,12 +4,15 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {env} from './constants/constants';
-
-import { AssetsModule } from './assets/assets.module';
 import { OrdersModule } from './orders/orders.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { StockModule } from './stock/stock.module';
+import { CategoriesModule } from './categories/categories.module';
+import { AlbumsModule } from './albums/albums.module';
 import UserEntity from './user/user.entity';
-
+import StockEntity from './stock/stock.entity';
+import AlbumEntity from './albums/albums.entity';
+import CategoryEntity from './categories/categories.entity';
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
@@ -19,9 +22,9 @@ import UserEntity from './user/user.entity';
     password: env.db_password,
     database: env.db_name,
     synchronize: true,
-    entities: [UserEntity],
+    entities: [UserEntity, StockEntity, AlbumEntity, CategoryEntity],
     logging: true
-  }),UserModule, AssetsModule, OrdersModule, SubscriptionsModule],
+  }),UserModule, OrdersModule, SubscriptionsModule, StockModule, CategoriesModule, AlbumsModule],
   controllers: [AppController],
   providers: [AppService],
 })

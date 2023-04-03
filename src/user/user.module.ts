@@ -7,9 +7,10 @@ import {JwtStrategy} from './user.strategy';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { env } from 'src/constants/constants';
 import { PassportModule } from '@nestjs/passport';
+import Stock from 'src/stock/stock.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User, Stock])],
   providers: [UserService, JwtStrategy],
   controllers: [UserController],
   exports: [UserService]
