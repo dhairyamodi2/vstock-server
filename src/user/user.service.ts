@@ -32,7 +32,7 @@ export class UserService {
             token = await jwt.sign({
                 email: payload.email,
                 id: payload.id,
-                type: payload.id
+                type: payload.type
             }, env.jwt_secret, {
                 expiresIn: env.jwt_expire
             })

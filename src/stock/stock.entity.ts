@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import User from "src/user/user.entity";
 import Album from "src/albums/albums.entity";
 import Category from "src/categories/categories.entity";
@@ -6,7 +6,7 @@ import Category from "src/categories/categories.entity";
 
 @Entity()
 class Stock{
-    @PrimaryColumn("uuid")
+    @PrimaryGeneratedColumn('uuid')
     id : string;
     
     @Column({nullable: false})
@@ -15,7 +15,7 @@ class Stock{
     @Column({nullable: true})
     price : string;
 
-    @Column({nullable: false})
+    @Column({nullable: false, default: 'image'})
     type: string;
 
     @ManyToOne(() => User, (user) => user.stock)
@@ -27,16 +27,17 @@ class Stock{
     @Column({nullable: true})
     reason_for_rejection : string;
 
-    @Column({nullable: true})
+    @Column('longtext', {nullable: false})
     public_url : string;
 
-    @Column({nullable: true})
+    @Column('longtext', {nullable: false})
     private_url : string;
 
     @ManyToOne(() => Album, (album) => album.stock)
     album : Album;
 
-    @ManyToMany(() => Category, (category) => category.stock)
+    @ManyToMany(() => Category, (category) => category.stock, {cascade: true})
+    @JoinTable()
     categories : Category[]
 }
 

@@ -4,14 +4,14 @@ import Stock from "src/stock/stock.entity";
 
 @Entity()
 class Album{
-    @PrimaryColumn('uuid')
-    id: string;
-
-    @Column({nullable: false})
+    @PrimaryColumn()
     name : string;
 
     @OneToMany(() => Stock, (stock) => stock.album)
     stock: Stock[]
+
+    @ManyToOne(() => User, (user) => user.albums)
+    user : User
 }
 
 export default Album;

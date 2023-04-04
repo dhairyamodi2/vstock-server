@@ -9,6 +9,8 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { StockModule } from './stock/stock.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AlbumsModule } from './albums/albums.module';
+import { AlbumController } from './album/album.controller';
+import { AlbumService } from './album/album.service';
 import UserEntity from './user/user.entity';
 import StockEntity from './stock/stock.entity';
 import AlbumEntity from './albums/albums.entity';
@@ -25,7 +27,7 @@ import CategoryEntity from './categories/categories.entity';
     entities: [UserEntity, StockEntity, AlbumEntity, CategoryEntity],
     logging: true
   }),UserModule, OrdersModule, SubscriptionsModule, StockModule, CategoriesModule, AlbumsModule],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, AlbumController],
+  providers: [AppService, AlbumService],
 })
 export class AppModule {}

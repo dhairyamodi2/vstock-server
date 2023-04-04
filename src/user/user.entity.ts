@@ -1,3 +1,4 @@
+import Album from "src/albums/albums.entity";
 import Stock from "src/stock/stock.entity";
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 
@@ -26,6 +27,9 @@ class User{
 
     @OneToMany(() => Stock, (stock) => stock.user)
     stock : Stock[]
+
+    @OneToMany(() => Album, (album) => album.user, {cascade: true})
+    albums : Album[]
 }
 
 export default User;
