@@ -9,6 +9,7 @@ import User from "./user.entity";
 type JwtPayload = {
     id : string;
     email : string;
+    type: string;
 }
 
 @Injectable()
@@ -26,10 +27,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt'){
 
     async validate(payload : JwtPayload) : Promise<any>{
         try {
+            console.log(payload);
             const user = await this.userRepository.findOne({
                 where: {
                     email : payload.email,
-                    id: payload.id
+                    id: payload.id,
+                    type: payload.type
                 }
             })
 

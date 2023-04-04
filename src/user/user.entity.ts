@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import Album from "src/albums/albums.entity";
+import Stock from "src/stock/stock.entity";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 
 @Entity()
 class User{
@@ -22,6 +24,12 @@ class User{
 
     @Column({nullable: true})
     IFS_code : string;
+
+    @OneToMany(() => Stock, (stock) => stock.user)
+    stock : Stock[]
+
+    @OneToMany(() => Album, (album) => album.user, {cascade: true})
+    albums : Album[]
 }
 
 export default User;

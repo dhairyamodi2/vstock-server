@@ -14,6 +14,10 @@ lerna-debug.log*
 # OS
 .DS_Store
 
+/src/constants/constants.ts
+
+/src/storage/serviceAccountKey.json
+
 # Tests
 /coverage
 /.nyc_output

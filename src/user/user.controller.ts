@@ -28,6 +28,7 @@ export class UserController {
     @Get('me')
     @UseGuards(AuthGuard('jwt'))
     async me(@Req() req: CustomRequest, @Res() res : Response) {
+        console.log(req.user);
         if(!req.user){
             return res.status(401).json({success: false, message: "unauthorized", data: {user : null}})
         }

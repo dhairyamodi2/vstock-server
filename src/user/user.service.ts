@@ -22,7 +22,8 @@ export class UserService {
             const user = await this.userRepository.findOne({
                 where: {
                     id: payload.id,
-                    email: payload.email
+                    email: payload.email,
+                    type: payload.type
                 }
             })
             if(!user) {
@@ -30,7 +31,8 @@ export class UserService {
             }
             token = await jwt.sign({
                 email: payload.email,
-                id: payload.id
+                id: payload.id,
+                type: payload.type
             }, env.jwt_secret, {
                 expiresIn: env.jwt_expire
             })
@@ -49,7 +51,7 @@ export class UserService {
         try {
             if(payload.type == "contributor"){
                 if(!payload.IFS_code || !payload.bank_ac_number){
-                    return {statusCode: 400, message: 'Bank details required for contributors', data: {user, token}}
+                    return {statusCode: 400, message: 'Bank details required for contributors', data: {user : null, token}}
                 }
             }
             let data = await this.userRepository.insert(payload);
@@ -59,7 +61,8 @@ export class UserService {
             }, env.jwt_secret, {
                 expiresIn: env.jwt_expire
             })
-            return {statusCode: 200, message: "", data: {user: payload, token}}
+            let user = await this.userRepository.findOne({where: {id: payload.id}});
+            return {statusCode: 200, message: "", data: {user, token}}
 
         } catch (error) {
             if(error instanceof TypeORMError){
