@@ -3,5 +3,5 @@ import { IsNotEmpty } from "class-validator";
 
 export class AlbumCreateDto{
     @IsNotEmpty()
-    name : string;
+    album_name : string;
 }

@@ -59,4 +59,12 @@ export class StockController {
         const result = await this.stockService.search(query, req.user);
         return res.status(result.statusCode).json(result);
     }
+
+    @Get(":id")
+    async getById(@Param() params, @Res() res : Response){
+        const result = await this.stockService.getImageById(params.id)
+        return res.status(result.statusCode).json(result);
+    }
+
+    
 }

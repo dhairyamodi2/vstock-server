@@ -17,7 +17,7 @@ export class CategoriesService {
     async createCategory(payload : CategoryDto, user : User) : Promise<CreatedResponse>{
         try {
 
-            payload.verdict = user.type === 'admin' ? 'approved' : 'pending'
+            payload.category_verdict = user.user_type === 'admin' ? 'approved' : 'pending'
             await this.categoryRepo.insert(payload);
             return {statusCode: 201, message: "Category created" , success: true}
         } catch (error) {

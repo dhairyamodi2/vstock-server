@@ -13,6 +13,6 @@ export interface AllAlbumsResponse{
     statusCode : 200 | 400 | 401 | 403 | 500;
     success: true | false;
     message: string;
-    data: Albums
+    data: Array<Album>
 
 }

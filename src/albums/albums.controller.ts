@@ -15,7 +15,7 @@ export class AlbumController{
     @UseGuards(AuthGuard('jwt'))
     @Post('create')
     async createAlbum(@Req() req: CustomRequest, @Body() body : AlbumCreateDto, @Res() res: Response){
-        const response = await this.albumService.createAlbum(body.name, req.user);
+        const response = await this.albumService.createAlbum(body.album_name, req.user);
         return res.status(response.statusCode).json(response); 
     }
 
@@ -29,6 +29,12 @@ export class AlbumController{
     @Delete(':id')
     async deleteAlbum(@Param() params, @Req() req: CustomRequest, @Res() res : Response){
         const result = await this.albumService.deleteAlbum(params, req.user);
+        return res.status(result.statusCode).json(result);
+    }
+
+    @Get('stock/:name')
+    async getStockByAlbum(@Param() params, @Res() res : Response){
+        const result = await this.albumService.getStockByAlbum(params.name);
         return res.status(result.statusCode).json(result);
     }
 }

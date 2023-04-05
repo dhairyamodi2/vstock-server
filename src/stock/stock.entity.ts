@@ -10,7 +10,7 @@ class Stock{
     id : string;
     
     @Column({nullable: false})
-    name : string;
+    image_name : string;
 
     @Column({nullable: true})
     price : string;

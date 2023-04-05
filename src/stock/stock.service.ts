@@ -84,9 +84,9 @@ export class StockService {
                 }
             })
             if(!stock || stock.verdict != 'approved') return {statusCode: 200, message: "Given stock doesn't exits or it is not approved", success: false}
-            const category = await this.categoryRepo.findOneBy({name: payload.category.name});
+            const category = await this.categoryRepo.findOneBy({category_name: payload.category.category_name});
 
-            if(!category || category.verdict != 'approved') return {statusCode: 200, message: "Given category doesn't exits or it hasn't been approved", success: false}
+            if(!category || category.category_verdict != 'approved') return {statusCode: 200, message: "Given category doesn't exits or it hasn't been approved", success: false}
 
             stock.categories.push(payload.category);
             await this.stockRepo.save(stock);
@@ -112,7 +112,7 @@ export class StockService {
             if(!stock) return {statusCode: 200, message: "Given stock doesn't exits", success: false}
 
             stock.categories = stock.categories.filter((category) => {
-                return category.name !== payload.category.name
+                return category.category_name !== payload.category.category_name
             })
             await this.stockRepo.save(stock);
             return {statusCode: 201, message: "Category removed from selected post", success: true}
@@ -144,7 +144,7 @@ export class StockService {
             console.log(category);
             const result = await this.categoryRepo.find({
                 where: {
-                    name: In(category)
+                    category_name: In(category)
                 },
                 relations: {
                     stock: true
@@ -179,7 +179,7 @@ export class StockService {
             let results : Array<Stock> = [];
             let startStringMatching = await this.stockRepo.find({
                 where: {
-                    name: Like(`${fields[0]}%`)
+                    image_name: Like(`${fields[0]}%`)
                 }
             })
             console.log(startStringMatching);
@@ -187,8 +187,8 @@ export class StockService {
 
             let categoryMatching = await this.categoryRepo.find({
                 where:[ {
-                    name: Like(`${fields[0]}%`)
-                }, {name: field.length > 1 ? Like(`${fields[1]}%`) : ""}],
+                    category_name: Like(`${fields[0]}%`)
+                }, {category_name: field.length > 1 ? Like(`${fields[1]}%`) : ""}],
                 relations: {
                     stock: true
                 }
@@ -201,10 +201,34 @@ export class StockService {
 
             let matching = await this.stockRepo.find({
                 where: {
-                    name: Like(`%${fields[0]}%`)
+                    image_name: Like(`%${fields[0]}%`)
                 }
             });
             results = results.concat(matching);
+            return {statusCode: 200, message: "", data: results, success: true}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+
+    async getImageById(id : string) : Promise<AllStockResponse<Stock>>{
+        try {
+            const results = await this.stockRepo.find({
+                where: {
+                    id : id,
+                    verdict: "approved"
+                },
+                relations: {
+                    album: true,
+                    categories: true,
+                    user: true
+                }
+            })
             return {statusCode: 200, message: "", data: results, success: true}
         } catch (error) {
             console.log(error);

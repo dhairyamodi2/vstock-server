@@ -5,10 +5,10 @@ import { Column, Entity, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
 @Entity()
 class Category{
     @PrimaryColumn()
-    name: string;
+    category_name: string;
 
     @Column({default: 'pending'})
-    verdict : string;
+    category_verdict : string;
 
     @ManyToMany(() => Stock, (stock) => stock.categories)
     stock : Stock[]
