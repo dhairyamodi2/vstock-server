@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
+import { query, Response } from 'express';
 import { CustomRequest } from 'src/types/types';
 import { SetCatDto, StockDto } from './stock.dto';
 import { StockService } from './stock.service';
@@ -45,6 +45,18 @@ export class StockController {
     @Delete(':id')
     async deleteStock(@Req() req : CustomRequest, @Param() params, @Res() res : Response){
         const result = await this.stockService.deleteStock(params, req.user);
+        return res.status(result.statusCode).json(result);
+    }
+
+    @Get("filter")
+    async getImages(@Req() req : CustomRequest, @Query() query, @Res() res : Response){
+        const result = await this.stockService.getImagesByCategory(query, req.user);
+        return res.status(result.statusCode).json(result);
+    }
+
+    @Get()
+    async search(@Req() req : CustomRequest, @Query() query, @Res() res : Response){
+        const result = await this.stockService.search(query, req.user);
         return res.status(result.statusCode).json(result);
     }
 }
