@@ -4,7 +4,7 @@ import User from 'src/user/user.entity';
 import { Readable } from 'stream';
 import { SetCatDto, StockDto } from './stock.dto';
 import { bucket } from 'src/storage/firebase.config';
-import { CloudinaryUploadResponse } from 'src/types/types';
+import { CloudinaryUploadResponse, DeletedResponse } from 'src/types/types';
 import path from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import Stock from './stock.entity';
@@ -122,6 +122,18 @@ export class StockService {
                 return {statusCode: 422, message: error.message, success: false}
             }
             return {statusCode: 500, message: '', success: false}
+        }
+    }
+
+    async deleteStock(params: any, user: User) : Promise<DeletedResponse>{
+        try {
+            await this.stockRepo.delete({id: params.id});
+            return {statusCode: 200, message: "Stock Deleted", success: true}
+        } catch (error) {
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false}
         }
     }
 }

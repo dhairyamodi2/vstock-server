@@ -1,14 +1,17 @@
 import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import Stock from "src/stock/stock.entity";
+import { DeletedResponse } from "src/types/types";
 import User from "src/user/user.entity";
 import { Repository, TypeORMError } from "typeorm";
-import { CreateAlbumResponse } from "./album.responses";
+import { AllAlbumsResponse, CreateAlbumResponse } from "./album.responses";
 import Album from "./albums.entity";
 
 @Injectable()
 export class AlbumService{
     constructor(
-        @InjectRepository(Album) private albumRepo : Repository<Album>
+        @InjectRepository(Album) private albumRepo : Repository<Album>,
+        @InjectRepository(Stock) private stockRepo : Repository<Stock>
     ){
 
     }
@@ -28,7 +31,7 @@ export class AlbumService{
         }
     }
 
-    async getAlbumsOfUser(user : User){
+    async getAlbumsOfUser(user : User) : Promise<AllAlbumsResponse>{
         try {
             const albums = await this.albumRepo.find({
                 where: {
@@ -39,11 +42,26 @@ export class AlbumService{
                     stock: true
                 }
             })
-            return albums;
+            return {statusCode: 200, success:true, message: "", data: {albums}}
 
         } catch (error) {
-            console.log(error);
-            return 'error'
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: {albums: []}}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: {albums: []}}
+        }
+    }
+
+    async deleteAlbum(params: any, user: User) : Promise<DeletedResponse> {
+        try {
+            await this.stockRepo.delete({album: params.id, user: user});
+            await this.albumRepo.delete({name: params.id, user: user});
+            return {statusCode: 200, message: "Album and all of its images deleted", success: true};
+        } catch (error) {
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false}
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, ParseFilePipe, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
@@ -39,5 +39,12 @@ export class StockController {
     async removeCategory(@Req() req : Request, @Body() body : SetCatDto, @Res() res : Response){
         const response = await this.stockService.removeCategory(body);
         return res.status(response.statusCode).json(response);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Delete(':id')
+    async deleteStock(@Req() req : CustomRequest, @Param() params, @Res() res : Response){
+        const result = await this.stockService.deleteStock(params, req.user);
+        return res.status(result.statusCode).json(result);
     }
 }
