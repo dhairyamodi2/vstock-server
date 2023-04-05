@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Put } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, Get, Injectable, InternalServerErrorException, Put } from '@nestjs/common';
 import cloudinary from 'src/storage/cloudinary.config';
 import User from 'src/user/user.entity';
 import { Readable } from 'stream';
@@ -8,8 +8,8 @@ import { CloudinaryUploadResponse, DeletedResponse } from 'src/types/types';
 import path from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import Stock from './stock.entity';
-import { Repository, TypeORMError } from 'typeorm';
-import { StockCreateResponse } from './stock.responses';
+import { Any, FindOperator, In, Like, Repository, TypeORMError } from 'typeorm';
+import { AllStockResponse, StockCreateResponse } from './stock.responses';
 import Category from 'src/categories/categories.entity';
 
 @Injectable()
@@ -83,10 +83,10 @@ export class StockService {
                     categories: true
                 }
             })
-            if(!stock) return {statusCode: 200, message: "Given stock doesn't exits", success: false}
-            const category = await this.categoryRepo.findOneBy({name: payload.category.name});
+            if(!stock || stock.verdict != 'approved') return {statusCode: 200, message: "Given stock doesn't exits or it is not approved", success: false}
+            const category = await this.categoryRepo.findOneBy({category_name: payload.category.category_name});
 
-            if(!category || category.verdict != 'approved') return {statusCode: 200, message: "Given category doesn't exits or it hasn't been approved", success: false}
+            if(!category || category.category_verdict != 'approved') return {statusCode: 200, message: "Given category doesn't exits or it hasn't been approved", success: false}
 
             stock.categories.push(payload.category);
             await this.stockRepo.save(stock);
@@ -112,7 +112,7 @@ export class StockService {
             if(!stock) return {statusCode: 200, message: "Given stock doesn't exits", success: false}
 
             stock.categories = stock.categories.filter((category) => {
-                return category.name !== payload.category.name
+                return category.category_name !== payload.category.category_name
             })
             await this.stockRepo.save(stock);
             return {statusCode: 201, message: "Category removed from selected post", success: true}
@@ -134,6 +134,145 @@ export class StockService {
                 return {statusCode: 200, message: error.message, success: false}
             }
             return {statusCode: 500, message: "Internal server error", success: false}
+        }
+    }
+
+    async getImagesByCategory(queries : any, user : User | null) : Promise<AllStockResponse<Category>>{
+        try {
+            console.log(queries);
+            const category = JSON.parse(queries.categories) as Array<string>;
+            console.log(category);
+            const result = await this.categoryRepo.find({
+                where: {
+                    category_name: In(category)
+                },
+                relations: {
+                    stock: true
+                }
+            })
+            return {statusCode: 200, message: "", data: result, success: true}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            if(error instanceof SyntaxError){
+                return {statusCode: 400, message: 'category params required as array ?category=[]', success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+
+    async search(query: any, user : User) : Promise<AllStockResponse<Stock>>{
+        try {
+            let field = query.search_field as string;
+            if(!field || field == "") {
+                const result = await this.stockRepo.find();
+                return {statusCode: 200, message: "", success: true, data: result};
+            }
+            let fields = field.split(' ');
+            if(fields.length == 0){
+                const result = await this.stockRepo.find();
+                return;
+            }
+            let results : Array<Stock> = [];
+            let startStringMatching = await this.stockRepo.find({
+                where: {
+                    image_name: Like(`${fields[0]}%`)
+                }
+            })
+            console.log(startStringMatching);
+            results = results.concat(startStringMatching);
+
+            let categoryMatching = await this.categoryRepo.find({
+                where:[ {
+                    category_name: Like(`${fields[0]}%`)
+                }, {category_name: field.length > 1 ? Like(`${fields[1]}%`) : ""}],
+                relations: {
+                    stock: true
+                }
+            })
+            console.log(categoryMatching);
+            categoryMatching.map((category) => {
+                results = results.concat(category.stock);
+            })
+            results = results.concat(startStringMatching);
+
+            let matching = await this.stockRepo.find({
+                where: {
+                    image_name: Like(`%${fields[0]}%`)
+                }
+            });
+            results = results.concat(matching);
+            return {statusCode: 200, message: "", data: results, success: true}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+
+    async getImageById(id : string) : Promise<AllStockResponse<Stock>>{
+        try {
+            const results = await this.stockRepo.find({
+                where: {
+                    id : id,
+                    verdict: "approved"
+                },
+                relations: {
+                    album: true,
+                    categories: true,
+                    user: true
+                }
+            })
+            return {statusCode: 200, message: "", data: results, success: true}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+    async getStockByAlbum(name : string) : Promise<AllStockResponse<Stock>>{
+        try {
+            const results = await this.stockRepo.find({
+                where: {
+                    album: In([name]),
+                    verdict: 'approved'
+                },
+            })
+            return {statusCode: 200, message: "", success: true, data: results}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+
+    async getStockByUser(user : string){
+        try {
+            const results = await this.stockRepo.find({
+                where: {
+                    user: In([user]),
+                    verdict: 'approved'
+                },
+            })
+            return {statusCode: 200, message: "", success: true, data: results}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
         }
     }
 }

@@ -2,27 +2,27 @@ import { Contains, IsEmail, IsIn, IsNotEmpty, IsNotEmptyObject, IsOptional, Vali
 
 export class LoginDto {
     @IsNotEmpty()
-    id: string;
+    uid: string;
 
     @IsNotEmpty()
     @IsEmail()
     email: string
 
     @IsNotEmpty()
-    type: string;
+    user_type: string;
 }
 
 export class RegisterDto {
     private static roles : Array<string> = ['customer', 'contributor', 'admin', 'subadmin']
     @IsNotEmpty()
-    id : string;
+    uid : string;
 
     @IsNotEmpty()
     email : string;
 
     @IsNotEmpty()
     @IsIn(RegisterDto.roles)
-    type : string;
+    user_type : string;
 
     @IsNotEmpty()
     name : string;

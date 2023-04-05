@@ -5,7 +5,7 @@ import User from "src/user/user.entity";
 
 export class StockDto{
     @IsNotEmpty()
-    name : string;
+    image_name : string;
 
     @IsOptional()
     user : User

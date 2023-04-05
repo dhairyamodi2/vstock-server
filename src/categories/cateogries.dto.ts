@@ -2,8 +2,8 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class CategoryDto{
     @IsNotEmpty()
-    name : string;
+    category_name : string;
 
     @IsOptional()
-    verdict : string;
+    category_verdict : string;
 }

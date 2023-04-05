@@ -7,9 +7,9 @@ import { Repository } from "typeorm";
 import User from "./user.entity";
 
 type JwtPayload = {
-    id : string;
+    uid : string;
     email : string;
-    type: string;
+    user_type: string;
 }
 
 @Injectable()
@@ -31,8 +31,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt'){
             const user = await this.userRepository.findOne({
                 where: {
                     email : payload.email,
-                    id: payload.id,
-                    type: payload.type
+                    uid: payload.uid,
+                    user_type: payload.user_type
                 }
             })
 

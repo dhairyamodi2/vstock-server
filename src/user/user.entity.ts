@@ -5,7 +5,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 @Entity()
 class User{
     @PrimaryColumn()
-    id: string
+    uid: string
 
     @Column({unique: true, nullable: false})
     email: string;
@@ -17,7 +17,7 @@ class User{
     industry: string;
 
     @Column({nullable : false})
-    type: string 
+    user_type: string 
 
     @Column({nullable: true})
     bank_ac_number: string

@@ -5,7 +5,7 @@ import Stock from "src/stock/stock.entity";
 @Entity()
 class Album{
     @PrimaryColumn()
-    name : string;
+    album_name : string;
 
     @OneToMany(() => Stock, (stock) => stock.album)
     stock: Stock[]

@@ -21,9 +21,9 @@ export class UserService {
         try {
             const user = await this.userRepository.findOne({
                 where: {
-                    id: payload.id,
+                    uid: payload.uid,
                     email: payload.email,
-                    type: payload.type
+                    user_type: payload.user_type
                 }
             })
             if(!user) {
@@ -31,8 +31,8 @@ export class UserService {
             }
             token = await jwt.sign({
                 email: payload.email,
-                id: payload.id,
-                type: payload.type
+                uid: payload.uid,
+                user_type: payload.user_type
             }, env.jwt_secret, {
                 expiresIn: env.jwt_expire
             })
@@ -49,7 +49,7 @@ export class UserService {
         let user : User | null = null;
         let token = null;
         try {
-            if(payload.type == "contributor"){
+            if(payload.user_type == "contributor"){
                 if(!payload.IFS_code || !payload.bank_ac_number){
                     return {statusCode: 400, message: 'Bank details required for contributors', data: {user : null, token}}
                 }
@@ -57,11 +57,11 @@ export class UserService {
             let data = await this.userRepository.insert(payload);
             token = await jwt.sign({
                 email: payload.email,
-                id: payload.id
+                uid: payload.uid
             }, env.jwt_secret, {
                 expiresIn: env.jwt_expire
             })
-            let user = await this.userRepository.findOne({where: {id: payload.id}});
+            let user = await this.userRepository.findOne({where: {uid: payload.uid}});
             return {statusCode: 200, message: "", data: {user, token}}
 
         } catch (error) {
