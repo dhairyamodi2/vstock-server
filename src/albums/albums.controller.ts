@@ -32,9 +32,9 @@ export class AlbumController{
         return res.status(result.statusCode).json(result);
     }
 
-    @Get('stock/:name')
-    async getStockByAlbum(@Param() params, @Res() res : Response){
-        const result = await this.albumService.getStockByAlbum(params.name);
-        return res.status(result.statusCode).json(result);
-    }
+    // @Get('stock/:name')
+    // async getStockByAlbum(@Param() params, @Res() res : Response){
+    //     const result = await this.albumService.getStockByAlbum(params.name);
+    //     return res.status(result.statusCode).json(result);
+    // }
 }

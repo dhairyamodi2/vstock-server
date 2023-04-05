@@ -1,4 +1,4 @@
-import { BadGatewayException, BadRequestException, Injectable, InternalServerErrorException, Put } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, Get, Injectable, InternalServerErrorException, Put } from '@nestjs/common';
 import cloudinary from 'src/storage/cloudinary.config';
 import User from 'src/user/user.entity';
 import { Readable } from 'stream';
@@ -230,6 +230,43 @@ export class StockService {
                 }
             })
             return {statusCode: 200, message: "", data: results, success: true}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+    async getStockByAlbum(name : string) : Promise<AllStockResponse<Stock>>{
+        try {
+            const results = await this.stockRepo.find({
+                where: {
+                    album: In([name]),
+                    verdict: 'approved'
+                },
+            })
+            return {statusCode: 200, message: "", success: true, data: results}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+
+    async getStockByUser(user : string){
+        try {
+            const results = await this.stockRepo.find({
+                where: {
+                    user: In([user]),
+                    verdict: 'approved'
+                },
+            })
+            return {statusCode: 200, message: "", success: true, data: results}
         } catch (error) {
             console.log(error);
             if(error instanceof TypeORMError){

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { query, Response } from 'express';
+import { Response } from 'express';
 import { CustomRequest } from 'src/types/types';
 import { SetCatDto, StockDto } from './stock.dto';
 import { StockService } from './stock.service';
@@ -66,5 +66,16 @@ export class StockController {
         return res.status(result.statusCode).json(result);
     }
 
-    
+    @Get("/album/:name")
+    async getByAlbum(@Param() params, @Res() res : Response){
+        const result = await this.stockService.getStockByAlbum(params.name)
+        return res.status(result.statusCode).json(result);
+    }
+
+    @Get("/user/:user")
+    async getByUser(@Param() params, @Res() res : Response){
+        const result = await this.stockService.getStockByUser(params.user)
+        return res.status(result.statusCode).json(result);
+    }
+
 }
