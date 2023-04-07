@@ -22,6 +22,9 @@ export class StockDto{
     @IsOptional()
     @IsArray()
     categories: Array<Category>
+
+    @IsOptional()
+    verdict: string;
 }
 
 export class SetCatDto{

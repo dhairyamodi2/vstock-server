@@ -15,7 +15,7 @@ export class StockController {
     }
 
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard('contributor'))
     @Post('upload')
     @UseInterceptors(FileInterceptor('file'))
     async upload(@UploadedFile(
@@ -29,19 +29,21 @@ export class StockController {
         return res.status(result.statusCode).json(result);
     }
 
+    @UseGuards(AuthGuard('contributor'))
     @Put('categories')
     async setCategory(@Req() req : Request, @Body() body : SetCatDto, @Res() res : Response){
         const response = await this.stockService.setCategories(body);
         return res.status(response.statusCode).json(response);
     }
 
+    @UseGuards(AuthGuard('contributor'))
     @Delete('categories')
     async removeCategory(@Req() req : Request, @Body() body : SetCatDto, @Res() res : Response){
         const response = await this.stockService.removeCategory(body);
         return res.status(response.statusCode).json(response);
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard('contributor'))
     @Delete(':id')
     async deleteStock(@Req() req : CustomRequest, @Param() params, @Res() res : Response){
         const result = await this.stockService.deleteStock(params, req.user);

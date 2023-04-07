@@ -10,6 +10,10 @@ class Category{
     @Column({default: 'pending'})
     category_verdict : string;
 
+
+    @Column('longtext', {nullable: false})
+    category_image: string;
+
     @ManyToMany(() => Stock, (stock) => stock.categories)
     stock : Stock[]
 }

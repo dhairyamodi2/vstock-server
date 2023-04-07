@@ -6,4 +6,7 @@ export class CategoryDto{
 
     @IsOptional()
     category_verdict : string;
+
+    @IsOptional()
+    category_image :string;
 }

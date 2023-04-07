@@ -10,6 +10,7 @@ import Stock from './stock.entity';
 @Module({
     imports: [TypeOrmModule.forFeature([User, Stock, Album, Category])],
     controllers: [StockController],
-    providers: [StockService, Stock]
+    providers: [StockService, Stock],
+    exports: [StockService]
 })
 export class StockModule {}

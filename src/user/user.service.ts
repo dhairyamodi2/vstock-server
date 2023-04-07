@@ -23,11 +23,13 @@ export class UserService {
                 where: {
                     uid: payload.uid,
                     email: payload.email,
-                    user_type: payload.user_type
                 }
             })
             if(!user) {
                 return {statusCode : 200, message: "user not found", data : {user: null, token}}
+            }
+            if(user.user_type != payload.user_type){
+                return {statusCode: 422, message: `Given user exists as ${user.user_type}`, data: {user : null, token}}
             }
             token = await jwt.sign({
                 email: payload.email,
@@ -39,7 +41,7 @@ export class UserService {
             return {statusCode: 200, message: "", data: {user, token}}
         } catch (error) {
             if(error instanceof TypeORMError){
-                return {statusCode: 422, message: error.message, data: {user: null, token}}
+                return {statusCode: 400, message: error.message, data: {user: null, token}}
             }         
             return {statusCode: 500, message: error, data: {user: null, token}}   
         }

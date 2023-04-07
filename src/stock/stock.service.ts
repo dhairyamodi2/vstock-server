@@ -60,6 +60,7 @@ export class StockService {
 
             payload.public_url = result.url
             payload.private_url = url[0];
+            payload.verdict = user.user_type == 'admin' ? 'approved' : 'pending'
     
             await this.stockRepo.insert(payload);
 
