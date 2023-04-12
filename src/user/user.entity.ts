@@ -1,6 +1,7 @@
 import Album from "src/albums/albums.entity";
 import Stock from "src/stock/stock.entity";
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import Subscription from "src/subscriptions/subscriptions.entity";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryColumn } from "typeorm";
 
 @Entity()
 class User{
