@@ -60,7 +60,7 @@ export class StockService {
 
             payload.public_url = result.url
             payload.private_url = url[0];
-            payload.verdict = user.user_type == 'admin' ? 'approved' : 'pending'
+            // payload.verdict = user.user_type == 'admin' ? 'approved' : 'pending'
     
             await this.stockRepo.insert(payload);
 
@@ -138,15 +138,18 @@ export class StockService {
         }
     }
 
-    async getImagesByCategory(queries : any, user : User | null) : Promise<AllStockResponse<Category>>{
+    async getImagesByCategory(queries : any, user : User | null) : Promise<AllStockResponse<Array<Category>>>{
         try {
             console.log(queries);
-            const category = JSON.parse(queries.categories) as Array<string>;
+            const category = queries.categories;
             console.log(category);
+            if(!category) throw new SyntaxError();
             const result = await this.categoryRepo.find({
-                where: {
+                where: [{
                     category_name: In(category)
-                },
+                }, {
+                    category_name: typeof category == 'string' ? category : ""
+                }], 
                 relations: {
                     stock: true
                 }
@@ -165,7 +168,7 @@ export class StockService {
     }
 
 
-    async search(query: any, user : User) : Promise<AllStockResponse<Stock>>{
+    async search(query: any, user : User) : Promise<AllStockResponse<Array<Stock>>>{
         try {
             let field = query.search_field as string;
             if(!field || field == "") {
@@ -219,7 +222,7 @@ export class StockService {
 
     async getImageById(id : string) : Promise<AllStockResponse<Stock>>{
         try {
-            const results = await this.stockRepo.find({
+            const results = await this.stockRepo.findOne({
                 where: {
                     id : id,
                     verdict: "approved"
@@ -240,13 +243,14 @@ export class StockService {
         }
     }
 
-    async getStockByAlbum(name : string) : Promise<AllStockResponse<Stock>>{
+    async getStockByAlbum(name : string) : Promise<AllStockResponse<Array<Stock>>>{
         try {
             const results = await this.stockRepo.find({
                 where: {
                     album: In([name]),
                     verdict: 'approved'
                 },
+                
             })
             return {statusCode: 200, message: "", success: true, data: results}
         } catch (error) {

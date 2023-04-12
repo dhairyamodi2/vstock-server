@@ -21,7 +21,7 @@ class Stock{
     @ManyToOne(() => User, (user) => user.stock)
     user : User
 
-    @Column({default: 'pending'})
+    @Column({default: 'approved'})
     verdict : string;
 
     @Column({nullable: true})

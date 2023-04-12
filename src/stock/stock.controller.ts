@@ -69,7 +69,7 @@ export class StockController {
     }
 
     @Get("/album/:name")
-    async getByAlbum(@Param() params, @Res() res : Response){
+    async getByAlbum(@Param() params, @Res() res : Response, @Query() query){
         const result = await this.stockService.getStockByAlbum(params.name)
         return res.status(result.statusCode).json(result);
     }

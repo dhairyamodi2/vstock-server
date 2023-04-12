@@ -29,7 +29,7 @@ export class UserService {
                 return {statusCode : 200, message: "user not found", data : {user: null, token}}
             }
             if(user.user_type != payload.user_type){
-                return {statusCode: 422, message: `Given user exists as ${user.user_type}`, data: {user : null, token}}
+                return {statusCode: 422, message: `Given user exists as ${user.user_type} Please try with different Gmail Account`, data: {user : null, token}}
             }
             token = await jwt.sign({
                 email: payload.email,

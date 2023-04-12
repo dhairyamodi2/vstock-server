@@ -7,7 +7,7 @@ class Category{
     @PrimaryColumn()
     category_name: string;
 
-    @Column({default: 'pending'})
+    @Column({default: 'approved'})
     category_verdict : string;
 
 

@@ -12,6 +12,6 @@ export interface AllStockResponse<T> {
     statusCode : 200 | 400 | 500
     message: string;
     success: true | false;
-    data: Array<T> | []
+    data: T | []
 }
 
