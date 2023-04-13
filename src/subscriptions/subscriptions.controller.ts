@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 import { CustomRequest } from 'src/types/types';
 import { SubscribeToDto } from './subscriptions.dto';
 import { SubscriptionsService } from './subscriptions.service';
@@ -18,7 +19,8 @@ export class SubscriptionsController {
     @UseGuards(AuthGuard('jwt'))
     @Post('subscribe')
     async subscribeToService(@Req() req : CustomRequest, @Body() body : SubscribeToDto, @Res() res: Response){
-        return await this.subService.subscribeTo(body, req.user);
+        const result = await this.subService.subscribeTo(body, req.user);
+        return res.status(result.statusCode).json(result);
     }
 
     @UseGuards(AuthGuard('jwt'))

@@ -8,3 +8,10 @@ export interface CheckDownloadsResponse {
     alreadySubscribed : boolean;
     subscription : Subscription | null;
 }
+
+
+export interface AddEntryResposne {
+    success : boolean;
+    statusCode : 200 | 400 | 500;
+    
+}

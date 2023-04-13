@@ -18,7 +18,7 @@ class Download{
     customer : string;
 
     @Column()
-    subscription: string;
+    subscription: number;
 }
 
 

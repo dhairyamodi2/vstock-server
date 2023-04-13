@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreatedResponse } from 'src/types/types';
 import User from 'src/user/user.entity';
 import { Repository, TypeORMError } from 'typeorm';
 import { SubscribeToDto } from './subscriptions.dto';
@@ -11,33 +12,23 @@ export class SubscriptionsService {
         @InjectRepository(Subscription) private subRepo : Repository<Subscription>
     ){
     }
-    async subscribeTo(payload : SubscribeToDto, user : User){
+    async subscribeTo(payload : SubscribeToDto, user : User) : Promise<CreatedResponse>{
         try {
             console.log(payload);
             if(payload.s_name == 'AGENCY') payload.remaining_images = 25;
             else if(payload.s_name == 'BUSINESS')payload.remaining_images = 5;
-            else return "not suitable type";
-            const subDetails = await this.subRepo.find({
-                where: {
-                    active : true,
-                    user: user.uid
-                }
-            })
-            
-            if(subDetails.length > 0){
-                return "you already have an active subscription";
-            }
+            else payload.remaining_images = 0;
             payload.user = user.uid;
             payload.active = true;
             await this.subRepo.insert(payload);
             console.log(payload);
-            return "subscribed";
+            return {statusCode: 200, message: "subscribed", success: true}
         } catch (error) {
             console.log(error);
             if(error instanceof TypeORMError){
-                return error.message
+                return {statusCode: 422, message: error.message, success: false}
             }
-            return 'error'
+            return {statusCode: 500, message: "Internal server", success: false}
         }
     }
 }
