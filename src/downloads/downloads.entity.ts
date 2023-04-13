@@ -8,7 +8,8 @@ class Download{
     @PrimaryGeneratedColumn('uuid')
     d_id : string;
 
-    stockid : string;
+    @Column()
+    stockId : string;
 
     @Column()
     contributor: string;

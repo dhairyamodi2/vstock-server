@@ -16,9 +16,9 @@ export class SubscriptionsController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Post()
+    @Post('subscribe')
     async subscribeToService(@Req() req : CustomRequest, @Body() body : SubscribeToDto, @Res() res: Response){
-
+        return await this.subService.subscribeTo(body, req.user);
     }
 
     @UseGuards(AuthGuard('jwt'))

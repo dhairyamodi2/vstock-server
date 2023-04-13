@@ -4,7 +4,7 @@ import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "t
 @Entity()
 class Subscription{
     @PrimaryGeneratedColumn()
-    s_id : string;
+    s_id : number;
 
 
     @Column({nullable: false})
@@ -14,10 +14,14 @@ class Subscription{
     remaining_images : number
 
     @Column({nullable: false})
+    active : boolean
+
+    @Column({nullable: false})
     user : string;
 
     @Column({nullable: false})
     amount_paid: number;
+
 }
 
 

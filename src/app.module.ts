@@ -11,6 +11,7 @@ import { AlbumsModule } from './albums/albums.module';
 import { AlbumController } from './albums/albums.controller';
 import { AlbumService } from './albums/albums.service';
 import { DownloadsModule } from './downloads/downloads.module';
+import { PaymentsModule } from './payments/payments.module';
 import UserEntity from './user/user.entity';
 import StockEntity from './stock/stock.entity';
 import AlbumEntity from './albums/albums.entity';
@@ -28,7 +29,7 @@ import DownloadEntity from './downloads/downloads.entity';
     synchronize: true,
     entities: [UserEntity, StockEntity, AlbumEntity, CategoryEntity, SubscriptionEntity, DownloadEntity],
     logging: true
-  }),UserModule, SubscriptionsModule, StockModule, CategoriesModule, AlbumsModule, DownloadsModule],
+  }),UserModule, SubscriptionsModule, StockModule, CategoriesModule, AlbumsModule, DownloadsModule, PaymentsModule],
   controllers: [AppController],
   providers: [AppService],
 })
