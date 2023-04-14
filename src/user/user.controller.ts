@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Head, Header, Headers, Post, Req, Res, Request as NestRequest ,UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Head, Header, Headers, Post, Req, Res, Request as NestRequest ,UnauthorizedException, UseGuards, Put } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Response } from 'express';
 import { endWith } from 'rxjs';
 import { CustomRequest } from 'src/types/types';
 import { Repository } from 'typeorm';
-import { LoginDto, RegisterDto } from './user.dto';
+import { LoginDto, RegisterDto, UpdateDto } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -33,6 +33,13 @@ export class UserController {
             return res.status(401).json({success: false, message: "unauthorized", data: {user : null}})
         }
         return res.status(200).json({success: true, message: "", data: {user: req.user}});
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Put('profile')
+    async updateProfile(@Req() req: CustomRequest, @Res() res : Response, @Body() body: UpdateDto){
+        const result = await this.userService.updateProfile(body, req.user);
+        return res.status(result.statusCode).json(result);
     }
 
 }

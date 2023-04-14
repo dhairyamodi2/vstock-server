@@ -11,7 +11,19 @@ export class LoginDto {
     @IsNotEmpty()
     user_type: string;
 }
+export class UpdateDto {
+    @IsNotEmpty()
+    name : string;
 
+    @IsNotEmpty()
+    industry: string;
+
+    @IsNotEmpty()
+    bank_ac_number : string;
+
+    @IsNotEmpty()
+    IFS_code : string;
+}
 export class RegisterDto {
     private static roles : Array<string> = ['customer', 'contributor', 'admin', 'subadmin']
     @IsNotEmpty()

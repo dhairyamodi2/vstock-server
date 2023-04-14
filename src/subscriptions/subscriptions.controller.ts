@@ -12,8 +12,9 @@ export class SubscriptionsController {
     }
     @UseGuards(AuthGuard('jwt'))
     @Get()
-    async mySubscriptions(@Req() req : CustomRequest){
-        return req.user.uid;
+    async mySubscriptions(@Req() req : CustomRequest, @Res() res : Response){
+        const result = await this.subService.mySubscription(req.user);
+        return res.status(result.statusCode).json(result);
     }
 
     @UseGuards(AuthGuard('jwt'))

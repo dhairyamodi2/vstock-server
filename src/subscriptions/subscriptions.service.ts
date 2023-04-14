@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreatedResponse } from 'src/types/types';
+import { CreatedResponse, GetReqResponse } from 'src/types/types';
 import User from 'src/user/user.entity';
 import { Repository, TypeORMError } from 'typeorm';
 import { SubscribeToDto } from './subscriptions.dto';
@@ -11,6 +11,16 @@ export class SubscriptionsService {
     constructor(
         @InjectRepository(Subscription) private subRepo : Repository<Subscription>
     ){
+    }
+
+
+    async mySubscription(user: User): Promise<GetReqResponse<Array<Subscription>>>{
+        try {
+            const subs = await this.subRepo.find({where: {user: user.uid}});
+            return {statusCode: 200, success: true, message: "", data: subs}
+        } catch (error) {
+            return {statusCode: 500, success: false, message: error, data: null}
+        }
     }
     async subscribeTo(payload : SubscribeToDto, user : User) : Promise<CreatedResponse>{
         try {

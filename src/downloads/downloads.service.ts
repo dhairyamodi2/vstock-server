@@ -1,21 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import Stock from 'src/stock/stock.entity';
 import Subscription from 'src/subscriptions/subscriptions.entity';
 import { CreatedResponse } from 'src/types/types';
 import User from 'src/user/user.entity';
 import { Repository, TypeORMError } from 'typeorm';
 import { DownloadsDto } from './downloads.dto';
 import Download from './downloads.entity';
-import { CheckDownloadsResponse } from './downloads.responses';
+import { CheckDownloadsResponse, InvokesData, MyInvokes } from './downloads.responses';
 
 @Injectable()
 export class DownloadsService {
     constructor(
         @InjectRepository(Download) private downloadRepo : Repository<Download>,
-        @InjectRepository(Subscription) private subRepo : Repository<Subscription>
-    ){
-        
-    }
+        @InjectRepository(Subscription) private subRepo : Repository<Subscription>,
+        @InjectRepository(Stock) private stockRepo : Repository<Stock>
+    )
+    {}
 
     async checkDownloads(stockId : string, user : User) : Promise<CheckDownloadsResponse>{
         try {
@@ -86,6 +87,26 @@ export class DownloadsService {
                 return {statusCode: 422, message: error.message, success: false}
             }
             return {statusCode: 500, message: "Internal Server Error", success: false}
+        }
+    }
+
+    async myInvokes(user : User) : Promise<MyInvokes>{
+        try {
+            const downloads = await this.downloadRepo.findBy({
+                customer: user.uid
+            });
+            let myInvokes : Array<InvokesData> = [];
+            for(let i = 0; i<downloads.length; i++){
+                const stock = await this.stockRepo.findOneBy({
+                    id: downloads[i].stockId
+                })
+                if(stock){
+                    myInvokes.push({id: stock.id, private_url: stock.private_url})
+                }
+            }
+            return {statusCode: 200, message: "", success: true, data: myInvokes}
+        } catch (error) {
+            return {statusCode: 500, message: error, data: [], success: false}
         }
     }
 }

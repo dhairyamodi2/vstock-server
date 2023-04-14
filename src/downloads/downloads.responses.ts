@@ -15,3 +15,15 @@ export interface AddEntryResposne {
     statusCode : 200 | 400 | 500;
     
 }
+
+
+export interface InvokesData {
+    id : string;
+    private_url : string;
+}
+export interface MyInvokes {
+    success : boolean;
+    statusCode : 200 | 400 | 500;
+    message: string;
+    data : Array<InvokesData>
+}
