@@ -243,7 +243,7 @@ export class StockService {
         }
     }
 
-    async getStockByAlbum(name : string) : Promise<AllStockResponse<Array<Stock>>>{
+    async getByAlbum(name : string) : Promise<AllStockResponse<Array<Stock>>>{
         try {
             const results = await this.stockRepo.find({
                 where: {
@@ -263,7 +263,7 @@ export class StockService {
     }
 
 
-    async getStockByUser(user : string){
+    async getByUser(user : string){
         try {
             const results = await this.stockRepo.find({
                 where: {
@@ -271,6 +271,71 @@ export class StockService {
                     verdict: 'approved'
                 },
             })
+            return {statusCode: 200, message: "", success: true, data: results}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+
+    async getStockByAlbum(id : string) : Promise<AllStockResponse<Array<Stock>>>{
+        try {
+            const stock = await this.stockRepo.findOne({
+                where: {
+                    id: id,
+                    verdict: 'approved'
+                },
+                relations: {
+                    album: true
+                }
+            } )
+
+            const results = await this.stockRepo.find({
+                where: {
+                    album: stock ? stock.album : null,
+                    verdict: 'approved'
+                }, relations: {
+                    album: true
+                }
+            })
+
+            console.log(results)
+            return {statusCode: 200, message: "", success: true, data: results}
+        } catch (error) {
+            console.log(error);
+            if(error instanceof TypeORMError){
+                return {statusCode: 200, message: error.message, success: false, data: []}
+            }
+            return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+    async getStockByUser(id : string) : Promise<AllStockResponse<Array<Stock>>>{
+        try {
+            const stock = await this.stockRepo.findOne({
+                where: {
+                    id: id,
+                    verdict: 'approved'
+                },
+                relations: {
+                    user : true
+                }
+            } )
+
+            const results = await this.stockRepo.find({
+                where: {
+                    user: stock ? stock.user : null,
+                    verdict: 'approved'
+                }, relations: {
+                    user: true
+                }
+            })
+
+            console.log(results)
             return {statusCode: 200, message: "", success: true, data: results}
         } catch (error) {
             console.log(error);

@@ -14,7 +14,18 @@ export class StockController {
 
     }
 
+    @Get('/by-albums/:id')
+    async getImagesByAlbums(@Param() params, @Res() res : Response){
+        const result = await this.stockService.getStockByAlbum(params.id)
+        return res.status(result.statusCode).json(result);
+    }
 
+    @Get('/by-user/:id')
+    async getImagesByUser(@Param() params, @Res() res : Response){
+        const result = await this.stockService.getStockByUser(params.id)
+        return res.status(result.statusCode).json(result);
+    }
+    
     @UseGuards(AuthGuard('contributor'))
     @Post('upload')
     @UseInterceptors(FileInterceptor('file'))
@@ -70,14 +81,16 @@ export class StockController {
 
     @Get("/album/:name")
     async getByAlbum(@Param() params, @Res() res : Response, @Query() query){
-        const result = await this.stockService.getStockByAlbum(params.name)
+        const result = await this.stockService.getByAlbum(params.name)
         return res.status(result.statusCode).json(result);
     }
 
     @Get("/user/:user")
     async getByUser(@Param() params, @Res() res : Response){
-        const result = await this.stockService.getStockByUser(params.user)
+        const result = await this.stockService.getByUser(params.user)
         return res.status(result.statusCode).json(result);
     }
+
+    
 
 }
