@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import User from "src/user/user.entity";
 import Album from "src/albums/albums.entity";
 import Category from "src/categories/categories.entity";
@@ -39,6 +39,9 @@ class Stock{
     @ManyToMany(() => Category, (category) => category.stock, {cascade: true})
     @JoinTable()
     categories : Category[]
+
+    @CreateDateColumn()
+    created_at : Date
 }
 
 export default Stock;

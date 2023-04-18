@@ -4,14 +4,14 @@ import User from 'src/user/user.entity';
 import { Readable } from 'stream';
 import { SetCatDto, StockDto } from './stock.dto';
 import { bucket } from 'src/storage/firebase.config';
-import { CloudinaryUploadResponse, DeletedResponse } from 'src/types/types';
+import { CloudinaryUploadResponse, CreatedResponse, DeletedResponse } from 'src/types/types';
 import path from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import Stock from './stock.entity';
 import { Any, FindOperator, In, Like, Repository, TypeORMError } from 'typeorm';
 import { AllStockResponse, StockCreateResponse } from './stock.responses';
 import Category from 'src/categories/categories.entity';
-
+import { GetReqResponse } from 'src/types/types';
 @Injectable()
 export class StockService {
     constructor(
@@ -343,6 +343,34 @@ export class StockService {
                 return {statusCode: 200, message: error.message, success: false, data: []}
             }
             return {statusCode: 500, message: "Internal server error", success: false, data: []}
+        }
+    }
+
+    async getMyImages(user : User) : Promise<GetReqResponse<Array<Stock>>>{
+        try {
+            const images = await this.stockRepo.find({
+                where: {
+                    user: user
+                },
+                relations: {
+                    user: true,
+                    categories: true,
+                    album: true
+                },
+                order: {
+                    created_at: 'DESC'
+                }
+            })
+            return {
+                statusCode: 200,
+                message: "",
+                data: images,
+                success: true
+            }
+        } catch (error) {
+            let message: string;
+            if(error instanceof TypeORMError) message = error.message
+            return {statusCode: 500, data: null, message, success: false}
         }
     }
 }

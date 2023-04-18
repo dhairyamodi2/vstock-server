@@ -20,6 +20,7 @@ export interface AddEntryResposne {
 export interface InvokesData {
     id : string;
     private_url : string;
+    public_url: string;
 }
 export interface MyInvokes {
     success : boolean;

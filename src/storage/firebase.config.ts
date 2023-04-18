@@ -6,7 +6,7 @@ import {ref } from 'firebase/storage';
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount as (string | ServiceAccount)),
-    storageBucket: "gs://vstock-bdc69.appspot.com"
+    storageBucket: "gs://vstock-12365.appspot.com"
 })
 
 const bucket = admin.storage().bucket();

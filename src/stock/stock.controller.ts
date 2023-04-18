@@ -92,5 +92,11 @@ export class StockController {
     }
 
     
+    @UseGuards(AuthGuard('contributor'))
+    @Get('creator/all')
+    async getMyImages(@Req() req : CustomRequest, @Res() res: Response){
+        const result = await this.stockService.getMyImages(req.user);
+        return res.status(result.statusCode).json(result);
+    }
 
 }

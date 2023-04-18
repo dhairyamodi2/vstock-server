@@ -46,7 +46,11 @@ export class CategoriesService {
 
     async allCategories() : Promise<CategoryResponse>{
         try {
-            const categories = await this.categoryRepo.find() 
+            const categories = await this.categoryRepo.find({
+                where: {
+                    category_verdict: 'approved'
+                }
+            }) 
             return {statusCode: 200, message: "", data: categories, success: true}
         } catch (error) {
             console.log(error);

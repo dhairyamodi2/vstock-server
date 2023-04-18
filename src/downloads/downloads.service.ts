@@ -101,7 +101,7 @@ export class DownloadsService {
                     id: downloads[i].stockId
                 })
                 if(stock){
-                    myInvokes.push({id: stock.id, private_url: stock.private_url})
+                    myInvokes.push({id: stock.id, private_url: stock.private_url, public_url: stock.public_url})
                 }
             }
             return {statusCode: 200, message: "", success: true, data: myInvokes}
