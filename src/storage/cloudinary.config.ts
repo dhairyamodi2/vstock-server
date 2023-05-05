@@ -1,4 +1,4 @@
-import { env } from "src/constants/constants";
+import { env } from "process";
 import { v2 } from "cloudinary";
 
 const cloudinary = v2;

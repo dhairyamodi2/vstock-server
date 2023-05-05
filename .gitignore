@@ -2,6 +2,10 @@
 /dist
 /node_modules
 
+
+/src/constants
+
+.env
 # Logs
 logs
 *.log

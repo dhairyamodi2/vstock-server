@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import User from './user.entity';
 import {JwtStrategy, RoleStrategy} from './user.strategy';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { env } from 'src/constants/constants';
 import { PassportModule } from '@nestjs/passport';
 import Stock from 'src/stock/stock.entity';
 
