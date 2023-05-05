@@ -4,6 +4,8 @@
 
 
 /src/constants
+
+.env
 # Logs
 logs
 *.log
