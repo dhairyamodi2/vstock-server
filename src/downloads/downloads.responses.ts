@@ -22,6 +22,7 @@ export interface InvokesData {
     private_url : string;
     public_url: string;
 }
+
 export interface MyInvokes {
     success : boolean;
     statusCode : 200 | 400 | 500;

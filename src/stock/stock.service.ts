@@ -1,5 +1,5 @@
 import { BadGatewayException, BadRequestException, Get, Injectable, InternalServerErrorException, Put } from '@nestjs/common';
-import cloudinary from 'src/storage/cloudinary.config';
+import init from 'src/storage/cloudinary.config';
 import User from 'src/user/user.entity';
 import { Readable } from 'stream';
 import { SetCatDto, StockDto } from './stock.dto';
@@ -22,9 +22,12 @@ export class StockService {
     }
     private async uploadFromBuffer(file: Express.Multer.File) {
         return new Promise<CloudinaryUploadResponse>((resolve, reject) => {
+            const cloudinary = init();
             const upload = cloudinary.uploader.upload_stream((err, result : CloudinaryUploadResponse) => {
                 if (result) resolve(result);
-                else reject(err);
+                else {
+                    reject(err);
+                }
             })
             let stream = new Readable();
             stream.push(file.buffer);
@@ -42,7 +45,6 @@ export class StockService {
 
             //uploading low quality version
             const result = await this.uploadFromBuffer(file);
-
             //upload high quality image in bucket
             const blob = bucket.file(result.asset_id + path.extname(file.originalname));
             const blobStream = blob.createWriteStream();
@@ -54,7 +56,6 @@ export class StockService {
                 console.log('finished');
             })
             blobStream.end(file.buffer);
-
             //get signed url
             const url = await blob.getSignedUrl({ action: 'read', expires: "03-08-2040" })
 
@@ -69,6 +70,7 @@ export class StockService {
             if(error instanceof TypeORMError){
                 return {statusCode: 422, message: error.message, success: false}
             }
+            console.log(error);
             return {statusCode: 500, message: '', success: false}
         }
     }
@@ -138,7 +140,7 @@ export class StockService {
         }
     }
 
-    async getImagesByCategory(queries : any, user : User | null) : Promise<AllStockResponse<Array<Category>>>{
+    async getImagesByCategory(queries : any, user : User | null) : Promise<GetReqResponse<Array<Category>>>{
         try {
             console.log(queries);
             const category = queries.categories;
@@ -168,7 +170,7 @@ export class StockService {
     }
 
 
-    async search(query: any, user : User) : Promise<AllStockResponse<Array<Stock>>>{
+    async search(query: any, user : User) : Promise<GetReqResponse<Array<Stock>>>{
         try {
             let field = query.search_field as string;
             if(!field || field == "") {
@@ -243,7 +245,7 @@ export class StockService {
         }
     }
 
-    async getByAlbum(name : string) : Promise<AllStockResponse<Array<Stock>>>{
+    async getByAlbum(name : string) : Promise<GetReqResponse<Array<Stock>>>{
         try {
             const results = await this.stockRepo.find({
                 where: {
@@ -282,7 +284,7 @@ export class StockService {
     }
 
 
-    async getStockByAlbum(id : string) : Promise<AllStockResponse<Array<Stock>>>{
+    async getStockByAlbum(id : string) : Promise<GetReqResponse<Array<Stock>>>{
         try {
             const stock = await this.stockRepo.findOne({
                 where: {
@@ -314,7 +316,7 @@ export class StockService {
         }
     }
 
-    async getStockByUser(id : string) : Promise<AllStockResponse<Array<Stock>>>{
+    async getStockByUser(id : string) : Promise<GetReqResponse<Array<Stock>>>{
         try {
             const stock = await this.stockRepo.findOne({
                 where: {

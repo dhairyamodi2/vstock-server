@@ -5,7 +5,7 @@ import { Response } from 'express';
 import { CustomRequest } from 'src/types/types';
 import { SetCatDto, StockDto } from './stock.dto';
 import { StockService } from './stock.service';
-
+import { env } from 'process';
 
 @Controller('stock')
 export class StockController {

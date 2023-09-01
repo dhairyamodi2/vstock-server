@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import path from 'path';
 import { bucket } from 'src/storage/firebase.config';
-import { CreatedResponse } from 'src/types/types';
+import { CreatedResponse, GetReqResponse } from 'src/types/types';
 import User from 'src/user/user.entity';
 import { Repository, TypeORMError } from 'typeorm';
 import Category from './categories.entity';
-import { CategoryResponse } from './categories.response';
 import { CategoryDto } from './cateogries.dto';
 
 @Injectable()
@@ -44,7 +43,7 @@ export class CategoriesService {
         }
     }
 
-    async allCategories() : Promise<CategoryResponse>{
+    async allCategories() : Promise<GetReqResponse<Array<Category>>>{
         try {
             const categories = await this.categoryRepo.find({
                 where: {

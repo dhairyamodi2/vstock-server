@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository, TypeORMError } from 'typeorm';
 import { LoginDto, RegisterDto, UpdateDto } from './user.dto';
 import User from './user.entity';
-import { LoginResponse, RegisterResponse } from './user.responses';
+import { AuthResponse } from './user.responses';
 import * as jwt from 'jsonwebtoken';
 import { env } from 'process';
 import { CreatedResponse } from 'src/types/types';
@@ -17,7 +17,7 @@ export class UserService {
 
     }
 
-    async login(payload: LoginDto): Promise<LoginResponse> {
+    async login(payload: LoginDto): Promise<AuthResponse> {
         let token = null;
         try {
             const user = await this.userRepository.findOne({
@@ -48,7 +48,7 @@ export class UserService {
         }
     }
 
-    async register(payload: RegisterDto): Promise<RegisterResponse> {
+    async register(payload: RegisterDto): Promise<AuthResponse> {
         let user: User | null = null;
         let token = null;
         try {
