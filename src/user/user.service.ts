@@ -5,7 +5,7 @@ import { LoginDto, RegisterDto, UpdateDto } from './user.dto';
 import User from './user.entity';
 import { LoginResponse, RegisterResponse } from './user.responses';
 import * as jwt from 'jsonwebtoken';
-import { env } from 'src/constants/constants';
+import { env } from 'process';
 import { CreatedResponse } from 'src/types/types';
 
 @Injectable()

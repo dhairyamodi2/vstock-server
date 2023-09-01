@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/c
 import { PassportStrategy } from "@nestjs/passport";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { env } from "src/constants/constants";
+import { env } from "process";
 import { Repository } from "typeorm";
 import User from "./user.entity";
 

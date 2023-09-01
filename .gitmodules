@@ -1,0 +1,6 @@
+[submodule "client"]
+	path = client
+	url = https://github.com/dhairyamodi2/vstock.git
+[submodule "dashboard"]
+	path = dashboard
+	url = https://github.com/dhairyamodi2/vstock-creator-dashboard.git
